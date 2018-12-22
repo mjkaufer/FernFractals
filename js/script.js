@@ -89,6 +89,7 @@ class FernLine {
             strokeWidth: this.thickness,
             fill: "none"
         })
+        this.pathObject.node.style.tranformOrigin = this.lastX + "px," + this.lastY + "px"
         
     }
 
@@ -131,40 +132,49 @@ class FernLine {
 
 class Fractal {
     constructor(x, y, dTheta, magnitude) {
-        this.nodes = [new FernLine(x, y)]
+        // this.nodes = [new FernLine(x, y)]
         this.dTheta = dTheta || 25
         this.magnitude = magnitude || (Math.min(width, height) / 8)
-        this.nodes[0].pathObject.node.classList.add("root")
+        var fakeFern = new FernLine(x, y)
+        fakeFern.pathObject.remove()
+
+        // structure it in "waves" so that way we're not adding useless SVG "stubs" that
+        // add nodes to the dom
+        this.nextNodes = [fakeFern.oldFeatures()]
+        this.nodes = []
     }
 
     // following pseudocode here: https://en.wikipedia.org/wiki/L-system#Example_7:_Fractal_plant
     iterate() {
         disableClick()
-        var newNodes = []
+
+        this.nodes = this.nextNodes.map(node => {
+            return fernLineFromFeatures(node)
+        })
+
+        var nextNodes = []
         var magnitude = this.magnitude
         var dTheta = this.dTheta
 
         this.nodes.forEach(node => {
             node.move(magnitude)
             node.dTheta += dTheta
-            newNodes.push(node.oldFeatures(noise(10)))
-            newNodes.push(node.oldFeatures(-1 * dTheta + noise(0.75)))
+            nextNodes.push(node.oldFeatures(noise(10)))
+            nextNodes.push(node.oldFeatures(-1 * dTheta + noise(0.75)))
             node.move(magnitude / 2, -1 * dTheta)
             var oldValues = node.move(magnitude / 4, -1 * dTheta)
-            newNodes.push(node.oldFeatures(noise(10)))      
+            nextNodes.push(node.oldFeatures(noise(10)))      
             node.moveCursor(oldValues)
             node.dTheta += dTheta
-            newNodes.push(node.oldFeatures(2 * dTheta + noise(0.75)))
+            nextNodes.push(node.oldFeatures(2 * dTheta + noise(0.75)))
         })
 
         this.magnitude *= 0.75
 
-        setTimeout(enableClick, 1.75 * 1000)
+        setTimeout(enableClick, 1.5 * 1000)
 
         // only add the animation after everything has been added, so it looks more seamless
-        this.nodes = newNodes.map(node => {
-            return fernLineFromFeatures(node)
-        })        
+        this.nextNodes = nextNodes
     }
 }
 
