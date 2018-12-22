@@ -1,0 +1,80 @@
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js"></script>
+        <title>Fractal Fern</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css?family=Merriweather|Montserrat');
+
+            .clickable {
+                cursor: pointer;
+            }
+
+            body {
+                margin: 0;
+                overflow: hidden;
+                font-family: 'Montserrat', sans-serif;
+            }
+
+            h1, h2, h3 {
+                font-family: 'Merriweather', serif;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+
+            p {
+                font-size: 0.75em;
+            }
+
+            .grow {
+                stroke-dasharray: 400;
+                stroke-dashoffset: 400;
+                z-index: 5;
+            }
+
+            .root.grow {
+                z-index: 1;
+            }
+
+            .grow {
+                animation: dash 6s linear forwards;
+            }
+
+            @keyframes dash {
+                from {
+                    stroke-dashoffset: 400;
+                }
+                to {
+                    stroke-dashoffset: 0;
+                }
+            }
+
+            #info {
+                position: absolute;
+                padding: 0.5em 1em;
+                width: 50%;
+            }
+
+            #dirt {
+                background-color: hsl(33, 32%, 22%);
+                width: 100%;
+                height: 2em;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                z-index: 2;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="info">
+            <h1>Fern Fractals</h1>
+            <p>Click to grow your fern!</p>
+            <p>I based the generation off of what Wikipedia described <a href="https://en.wikipedia.org/wiki/L-system#Example_7:_Fractal_plant">here</a></p>
+            <p>I added color "genetics", cutesie CSS animations, and some noise</p>
+            <p>Browsers can't handle over 7 iterations, so that's as big as your fern will get</p>
+        </div>
+        <div id="dirt"></div>
+        <svg id="snap" width="800" height="600"></svg>
+        <script src="js/script.js"></script>
+    </body>
+</html>
